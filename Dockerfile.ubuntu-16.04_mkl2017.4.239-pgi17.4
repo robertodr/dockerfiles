@@ -1,0 +1,76 @@
+FROM ubuntu:16.04
+
+MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
+
+RUN apt -y update; \
+    apt -y upgrade; \
+    apt -y install git g++ gcc gfortran \
+                   curl wget bzip2 cpio libopenmpi-dev \
+                   openmpi-bin python-dev python-pip libboost-dev \
+                   libhdf5-openmpi-dev uuid-dev pkg-config
+
+SHELL ["/bin/bash", "-c"]
+
+# Download and install MKL
+RUN curl -LO http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz; \
+    mkdir -p l_mkl_2017.4.239; \
+    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
+    cd l_mkl_2017.4.239; \
+    curl -LO https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg; \
+    ./install.sh --silent=silent-mkl.cfg
+RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
+
+# Download and install PGI
+RUN curl -LO https://www.dropbox.com/s/re6jqd16holx4x9/pgilinux-2017-174-x86_64.tar.gz; \
+    mkdir -p pgilinux-2017-174-x86_64; \
+    tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1
+ENV PGI /opt/pgi
+ENV PGI_SILENT "true"
+ENV PGI_ACCEPT_EULA "accept"
+ENV PGI_INSTALL_DIR $PGI
+ENV PGI_INSTALL_TYPE "single"
+ENV PGI_INSTALL_NVIDIA "false"
+ENV PGI_INSTALL_AMD "false"
+ENV PGI_INSTALL_MPI "true"
+ENV PGI_MPI_GPU_SUPPORT "false"
+RUN cd pgilinux-2017-174-x86_64; \
+   ./install
+RUN rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64
+
+# Add a normal user
+RUN adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder
+RUN adduser mightybuilder sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER mightybuilder
+RUN source /opt/intel/mkl/bin/mklvars.sh intel64
+ENV HOME /home/mightybuilder
+ENV PGI /opt/pgi
+ENV PATH $PGI/linux86-64/17.4/bin:$PGI/linux86-64/17.4/mpi/openmpi/bin:$PATH
+ENV MANPATH $MANPATH:$PGI/linux86-64/17.4/man:$PGI/linux86-64/17.4/mpi/openmpi/man
+ENV LM_LICENSE_FILE $LM_LICENSE_FILE:$PGI/license.dat
+
+WORKDIR $HOME
+
+RUN mkdir -p Deps
+
+# Download and install CMake 3.7.2
+RUN cd Deps; \
+    mkdir -p cmake-3.7.2; \
+    curl -L https://goo.gl/dSVHTh | tar -xz -C cmake-3.7.2 --strip-components=1
+ENV PATH $HOME/Deps/cmake-3.7.2/bin:$PATH
+ENV LD_LIBARY_PATH $HOME/Deps/cmake-3.7.2/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+# Download and install Kitware-maintained Ninja 1.7.2
+RUN cd Deps; \
+    mkdir -p ninja-1.7.2; \
+    curl -L https://goo.gl/4g5Jjv | tar -xz -C ninja-1.7.2 --strip-components=1
+ENV PATH $HOME/Deps/ninja-1.7.2:$PATH
+# Download and install Eigen 3.3
+RUN cd Deps; \
+    curl -L http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar xz; \
+    cd eigen-eigen-5a0156e40feb; \
+    cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=${PWD}/eigen-3.3.4 >/dev/null 2>&1; \
+    cmake --build build_eigen -- install >/dev/null 2>&1
+# Upgrade pip
+RUN pip install --upgrade pip
+# Install virtualenv
+RUN pip install --user virtualenv
