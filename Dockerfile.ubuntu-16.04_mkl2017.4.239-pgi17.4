@@ -4,25 +4,39 @@ MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
 
 RUN apt -y update; \
     apt -y upgrade; \
-    apt -y install git g++ gcc gfortran \
-                   curl wget bzip2 cpio libopenmpi-dev \
-                   openmpi-bin python-dev python-pip libboost-dev \
-                   libhdf5-openmpi-dev uuid-dev pkg-config
+    apt -y install bzip2 \
+                   cpio \
+                   curl \
+                   g++ \
+                   gcc \
+                   gfortran \
+                   git \
+                   libboost-dev \
+                   libhdf5-openmpi-dev \
+                   libopenmpi-dev \
+                   openmpi-bin \
+                   pkg-config \
+                   python-dev \
+                   python-pip \
+                   uuid-dev \
+                   wget
 
 SHELL ["/bin/bash", "-c"]
 
-# Download and install MKL
-RUN curl -LO http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz; \
-    mkdir -p l_mkl_2017.4.239; \
+# Download MKL
+ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz
+# Install MKL
+RUN mkdir -p l_mkl_2017.4.239; \
     tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
-    cd l_mkl_2017.4.239; \
-    curl -LO https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg; \
+ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239
+RUN cd l_mkl_2017.4.239; \
     ./install.sh --silent=silent-mkl.cfg
 RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
 
-# Download and install PGI
-RUN curl -LO https://www.dropbox.com/s/re6jqd16holx4x9/pgilinux-2017-174-x86_64.tar.gz; \
-    mkdir -p pgilinux-2017-174-x86_64; \
+# Download PGI
+ADD https://www.dropbox.com/s/re6jqd16holx4x9/pgilinux-2017-174-x86_64.tar.gz
+# Install PGI
+RUN mkdir -p pgilinux-2017-174-x86_64; \
     tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1
 ENV PGI /opt/pgi
 ENV PGI_SILENT "true"
