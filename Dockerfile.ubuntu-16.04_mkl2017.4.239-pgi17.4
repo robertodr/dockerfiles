@@ -31,7 +31,7 @@ ENV PGI_INSTALL_DIR $PGI
 ENV PGI_INSTALL_TYPE "single"
 ENV PGI_INSTALL_NVIDIA "false"
 ENV PGI_INSTALL_AMD "false"
-ENV PGI_INSTALL_MPI "true"
+ENV PGI_INSTALL_MPI "false"
 ENV PGI_MPI_GPU_SUPPORT "false"
 RUN cd pgilinux-2017-174-x86_64; \
    ./install
@@ -45,8 +45,8 @@ USER mightybuilder
 RUN source /opt/intel/mkl/bin/mklvars.sh intel64
 ENV HOME /home/mightybuilder
 ENV PGI /opt/pgi
-ENV PATH $PGI/linux86-64/17.4/bin:$PGI/linux86-64/17.4/mpi/openmpi/bin:$PATH
-ENV MANPATH $MANPATH:$PGI/linux86-64/17.4/man:$PGI/linux86-64/17.4/mpi/openmpi/man
+ENV PATH $PGI/linux86-64/17.4/bin:$PGI/linux86-64/17.4/mpi/mvapich/bin:$PATH
+ENV MANPATH $MANPATH:$PGI/linux86-64/17.4/man:$PGI/linux86-64/17.4/mpi/mvapich/man
 ENV LM_LICENSE_FILE $LM_LICENSE_FILE:$PGI/license.dat
 
 WORKDIR $HOME
@@ -68,9 +68,10 @@ ENV PATH $HOME/Deps/ninja-1.7.2:$PATH
 RUN cd Deps; \
     curl -L http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar xz; \
     cd eigen-eigen-5a0156e40feb; \
-    cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=${PWD}/eigen-3.3.4 >/dev/null 2>&1; \
+    cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen-3.3.4 >/dev/null 2>&1; \
     cmake --build build_eigen -- install >/dev/null 2>&1
 # Upgrade pip
 RUN pip install --upgrade pip
 # Install virtualenv
 RUN pip install --user virtualenv
+ENV PATH $HOME/.local/bin:$PATH
