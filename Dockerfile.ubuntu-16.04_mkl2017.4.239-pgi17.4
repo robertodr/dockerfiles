@@ -24,17 +24,17 @@ RUN apt -y update; \
 SHELL ["/bin/bash", "-c"]
 
 # Download MKL
-ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz
+ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz l_mkl_2017.4.239.tgz
 # Install MKL
 RUN mkdir -p l_mkl_2017.4.239; \
     tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
-ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239
+ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239/silent-mkl.cfg
 RUN cd l_mkl_2017.4.239; \
     ./install.sh --silent=silent-mkl.cfg
 RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
 
 # Download PGI
-ADD https://www.dropbox.com/s/re6jqd16holx4x9/pgilinux-2017-174-x86_64.tar.gz
+ADD https://www.dropbox.com/s/re6jqd16holx4x9/pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64.tar.gz
 # Install PGI
 RUN mkdir -p pgilinux-2017-174-x86_64; \
     tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1
