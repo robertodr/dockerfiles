@@ -27,7 +27,7 @@ SHELL ["/bin/bash", "-c"]
 ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz l_mkl_2017.4.239.tgz
 # Install MKL
 RUN mkdir -p l_mkl_2017.4.239; \
-    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
+    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1
 ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239/silent-mkl.cfg
 RUN cd l_mkl_2017.4.239; \
     ./install.sh --silent=silent-mkl.cfg
