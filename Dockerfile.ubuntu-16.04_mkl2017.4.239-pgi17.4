@@ -34,7 +34,7 @@ RUN cd l_mkl_2017.4.239; \
 RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
 
 # Download PGI
-ADD https://www.dropbox.com/s/re6jqd16holx4x9/pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64.tar.gz
+ADD https://drive.google.com/open?id=0B2VuLXstBkN3dFB0Um44Z1ktdnc pgilinux-2017-174-x86_64.tar.gz
 # Install PGI
 RUN mkdir -p pgilinux-2017-174-x86_64; \
     tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1
