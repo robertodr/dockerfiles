@@ -13,6 +13,7 @@ RUN apt -y update; \
                    git \
                    libblas-dev \
                    libboost-all-dev \
+                   libhdf5-openmpi-dev \
                    liblapack-dev \
                    libopenmpi-dev \
                    openmpi-bin \
@@ -81,12 +82,6 @@ RUN cd $HOME/Deps; \
     cd eigen-eigen-5a0156e40feb; \
     cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen-3.3.4 >/dev/null 2>&1; \
     cmake --build build_eigen -- install >/dev/null 2>&1
-# Download and install HDF5
-RUN cd $HOME/Deps; \
-    curl -L https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz | tar xz; \
-    cd hdf5-1.10.1; \
-    ./configure --prefix=${HOME}/Deps/hdf5 --enable-shared --enable-fortran --enable-parallel > /dev/null 2>&1; \
-    make install > /dev/null 2&>1
 # Upgrade pip
 RUN pip install --upgrade pip
 # Install virtualenv and put it on PATH
