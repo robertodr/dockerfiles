@@ -70,7 +70,7 @@ RUN cd $HOME/Deps; \
     mkdir -p cmake-3.10.0; \
     curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
 ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
-ENV LD_LIBARY_PATH $HOME/Deps/cmake-3.10.0/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH $HOME/Deps/cmake-3.10.0/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # Download and install Kitware-maintained Ninja 1.7.2
 RUN cd $HOME/Deps; \
     mkdir -p ninja-1.7.2; \
@@ -82,12 +82,20 @@ RUN cd $HOME/Deps; \
     cd eigen-eigen-5a0156e40feb; \
     cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen-3.3.4 >/dev/null 2>&1; \
     cmake --build build_eigen -- install >/dev/null 2>&1
+# Download and install HDF5 1.10.1
+RUN cd $HOME/Deps; \
+    mkdir -p hdf5-1.10.1; \
+    curl -L https://goo.gl/Pvreb8 | tar -xj -C hdf5-1.10.1 --strip-components=1
+    cd hdf5-1.10.1; \
+    ./configure --prefix=$HOME/Deps/hdf5-1.10.1 --enable-fortran --enable-shared --enable-parallel > /dev/null 2>&1; \
+    make install > /dev/null 2>&1
+ENV LD_LIBRARY_PATH $HOME/Deps/hdf5-1.10.1/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # Upgrade pip
 RUN pip install --upgrade pip
 # Install virtualenv and put it on PATH
 RUN pip install --user virtualenv
 ENV PATH $HOME/.local/bin:$PATH
-ENV LD_LIBARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # Set the entry point
 ENTRYPOINT ["/bin/bash", "-l"]
