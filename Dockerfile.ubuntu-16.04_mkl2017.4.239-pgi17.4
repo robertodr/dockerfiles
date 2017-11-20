@@ -65,12 +65,12 @@ ENV HOME /root
 
 # Install more dependencies
 RUN mkdir -p $HOME/Deps
-# Download and install CMake 3.7.2
+# Download and install CMake 3.10.0
 RUN cd $HOME/Deps; \
-    mkdir -p cmake-3.7.2; \
-    curl -L https://goo.gl/dSVHTh | tar -xz -C cmake-3.7.2 --strip-components=1
-ENV PATH $HOME/Deps/cmake-3.7.2/bin:$PATH
-ENV LD_LIBARY_PATH $HOME/Deps/cmake-3.7.2/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    mkdir -p cmake-3.10.10; \
+    curl -L https://goo.gl/4nPeVY | tar -xz -C cmake-3.10.0 --strip-components=1
+ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
+ENV LD_LIBARY_PATH $HOME/Deps/cmake-3.10.0/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # Download and install Kitware-maintained Ninja 1.7.2
 RUN cd $HOME/Deps; \
     mkdir -p ninja-1.7.2; \
