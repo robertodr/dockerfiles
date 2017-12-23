@@ -26,17 +26,7 @@ RUN apt -y update; \
 
 SHELL ["/bin/bash", "-c"]
 
-# Download MKL
-ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz l_mkl_2017.4.239.tgz
-# Install MKL
-RUN mkdir -p l_mkl_2017.4.239; \
-    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1
-ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239/silent-mkl.cfg
-RUN cd l_mkl_2017.4.239; \
-    ./install.sh --silent=silent-mkl.cfg
-RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
-
-# Download PGI and install PGI
+# Download and install PGI
 # Note: ADD doesn't seem to work for this tarball...
 RUN curl -LO https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz; \
     mkdir -p pgilinux-2017-174-x86_64; \
@@ -54,8 +44,7 @@ RUN cd pgilinux-2017-174-x86_64; \
    ./install
 RUN rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64
 
-# Environment variables for MKL and PGI
-RUN source /opt/intel/mkl/bin/mklvars.sh intel64
+# Environment variables for PGI
 ENV PGI /opt/pgi
 ENV PATH $PGI/linux86-64/17.4/bin:$PGI/linux86-64/17.4/mpi/mvapich/bin:$PATH
 ENV MANPATH $MANPATH:$PGI/linux86-64/17.4/man:$PGI/linux86-64/17.4/mpi/mvapich/man
