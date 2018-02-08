@@ -85,6 +85,4 @@ RUN pip install --user virtualenv
 ENV PATH $HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
-# Set the entry point
-ENTRYPOINT ["/bin/bash", "-l"]
-CMD ["echo", "Hello, world! This is robertodr/ubuntu-16.04_pgi17.4_hdf5"]
+RUN echo "Hello, world! This is robertodr/ubuntu-16.04_pgi17.4_hdf5"
