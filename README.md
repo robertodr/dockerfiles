@@ -21,7 +21,7 @@ built every time, only those whose Dockerfile changed. This is done as follows:
       image=${dockerfile#Dockerfile.}
       docker build --tag "$DOCKER_USERNAME"/$image --file $dockerfile .
       docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_PASSWORD"
-      docker push "$DOCKER_USERNAME"/$image
+      travis_wait 30 docker push "$DOCKER_USERNAME"/$image
     fi
   done
 ```
