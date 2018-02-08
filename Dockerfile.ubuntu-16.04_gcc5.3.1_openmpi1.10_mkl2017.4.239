@@ -30,8 +30,13 @@ RUN cd l_mkl_2017.4.239; \
     ./install.sh --silent=silent-mkl.cfg
 RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
 
-WORKDIR /root
-ENV HOME /root
+RUN adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder
+RUN adduser mightybuilder sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER mightybuilder
+ENV HOME /home/mightybuilder
+
+WORKDIR $HOME
 
 # Install more dependencies
 RUN mkdir -p $HOME/Deps
@@ -40,10 +45,8 @@ RUN cd $HOME/Deps; \
     mkdir -p cmake-3.10.0; \
     curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
 ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
-# Upgrade pip
-RUN pip install --upgrade pip
-# Install virtualenv and put it on PATH
-RUN pip install --user virtualenv
+# Upgrade pip, install virtualenv and put it on PATH
+RUN pip install --user --upgrade pip virtualenv
 ENV PATH $HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # Export MKLROOT and MATH_ROOT
