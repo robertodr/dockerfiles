@@ -20,15 +20,33 @@ RUN apt -y update; \
 SHELL ["/bin/bash", "-c"]
 
 # Download MKL
-ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz
+ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz l_mkl_2017.4.239.tgz
 # Install MKL
 RUN mkdir -p l_mkl_2017.4.239; \
-    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
-ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239
+    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1
+ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239/silent-mkl.cfg
 RUN cd l_mkl_2017.4.239; \
     ./install.sh --silent=silent-mkl.cfg
 RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
 
+WORKDIR /root
+ENV HOME /root
+
+# Install more dependencies
+RUN mkdir -p $HOME/Deps
+# Download and install CMake 3.10.0
+RUN cd $HOME/Deps; \
+    mkdir -p cmake-3.10.0; \
+    curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
+ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
+# Upgrade pip
+RUN pip install --upgrade pip
+# Install virtualenv and put it on PATH
+RUN pip install --user virtualenv
+ENV PATH $HOME/.local/bin:$PATH
+ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
 # Set the entry point
 ENTRYPOINT ["/bin/bash", "-l"]
+# Export MKL variables
 RUN source /opt/intel/bin/mklvars.sh intel64
