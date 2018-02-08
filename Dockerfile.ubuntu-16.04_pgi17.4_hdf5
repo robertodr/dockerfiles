@@ -59,7 +59,6 @@ RUN cd $HOME/Deps; \
     mkdir -p cmake-3.10.0; \
     curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
 ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
-ENV LD_LIBRARY_PATH $HOME/Deps/cmake-3.10.0/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # Download and install Kitware-maintained Ninja 1.7.2
 RUN cd $HOME/Deps; \
     mkdir -p ninja-1.7.2; \
