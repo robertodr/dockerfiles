@@ -49,4 +49,4 @@ ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # Set the entry point
 ENTRYPOINT ["/bin/bash", "-l"]
 # Export MKL variables
-RUN source /opt/intel/bin/mklvars.sh intel64
+RUN source /opt/intel/bin/compilervars.sh intel64
