@@ -46,9 +46,9 @@ RUN pip install --upgrade pip
 RUN pip install --user virtualenv
 ENV PATH $HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+# Export MKLROOT and MATH_ROOT
+ENV MKLROOT=/opt/intel/compilers_and_libraries_2017.5.239/linux/mkl
+ENV MATH_ROOT=$MKLROOT
 
-# Export MKL variables
-RUN source /opt/intel/bin/compilervars.sh intel64
-
-# Set the entry point
-ENTRYPOINT ["/bin/bash", "-l"]
+# Say hello to the world!
+RUN echo "Hello, world! This is robertodr/ubuntu-16.04_gcc5.3.1_openmpi1.10_mkl2017.4.239"
