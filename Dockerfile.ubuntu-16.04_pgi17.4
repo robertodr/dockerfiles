@@ -1,0 +1,67 @@
+FROM ubuntu:16.04
+
+MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
+
+RUN apt -y update; \
+    apt -y upgrade; \
+    apt -y install bzip2 \
+                   cpio \
+                   curl \
+                   g++ \
+                   gcc \
+                   gfortran \
+                   git \
+                   libatlas-dev \
+                   libboost-all-dev \
+                   liblapack-dev \
+                   libopenmpi-dev \
+                   openmpi-bin \
+                   python-dev \
+                   python-pip \
+                   wget
+
+SHELL ["/bin/bash", "-c"]
+
+# Download and install PGI
+# Note: ADD doesn't seem to work for this tarball...
+RUN curl -LO https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz; \
+    mkdir -p pgilinux-2017-174-x86_64; \
+    tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1
+ENV PGI /opt/pgi
+ENV PGI_SILENT "true"
+ENV PGI_ACCEPT_EULA "accept"
+ENV PGI_INSTALL_DIR $PGI
+ENV PGI_INSTALL_TYPE "single"
+ENV PGI_INSTALL_NVIDIA "false"
+ENV PGI_INSTALL_AMD "false"
+ENV PGI_INSTALL_MPI "false"
+ENV PGI_MPI_GPU_SUPPORT "false"
+RUN cd pgilinux-2017-174-x86_64; \
+   ./install
+RUN rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64
+
+# Environment variables for PGI
+ENV PGI /opt/pgi
+ENV PATH $PGI/linux86-64/17.4/bin:$PGI/linux86-64/17.4/mpi/mvapich/bin:$PATH
+ENV MANPATH $MANPATH:$PGI/linux86-64/17.4/man:$PGI/linux86-64/17.4/mpi/mvapich/man
+ENV LM_LICENSE_FILE $LM_LICENSE_FILE:$PGI/license.dat
+
+WORKDIR /root
+ENV HOME /root
+
+# Install more dependencies
+RUN mkdir -p $HOME/Deps
+# Download and install CMake 3.10.0
+RUN cd $HOME/Deps; \
+    mkdir -p cmake-3.10.0; \
+    curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
+ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
+# Upgrade pip
+RUN pip install --upgrade pip
+# Install virtualenv and put it on PATH
+RUN pip install --user virtualenv
+ENV PATH $HOME/.local/bin:$PATH
+ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
+# Set the entry point
+ENTRYPOINT ["/bin/bash", "-l"]
