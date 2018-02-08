@@ -1,0 +1,34 @@
+FROM ubuntu:16.04
+
+MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
+
+RUN apt -y update; \
+    apt -y upgrade; \
+    apt -y install bzip2 \
+                   cpio \
+                   curl \
+                   g++ \
+                   gcc \
+                   gfortran \
+                   git \
+                   libopenmpi-dev \
+                   openmpi-bin \
+                   python-dev \
+                   python-pip \
+                   wget
+
+SHELL ["/bin/bash", "-c"]
+
+# Download MKL
+ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz
+# Install MKL
+RUN mkdir -p l_mkl_2017.4.239; \
+    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
+ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239
+RUN cd l_mkl_2017.4.239; \
+    ./install.sh --silent=silent-mkl.cfg
+RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
+
+# Set the entry point
+ENTRYPOINT ["/bin/bash", "-l"]
+RUN source /opt/intel/bin/mklvars.sh intel64
