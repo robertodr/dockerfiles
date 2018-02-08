@@ -11,6 +11,7 @@ RUN apt -y update; \
                    gcc \
                    gfortran \
                    git \
+                   libboost-all-dev \
                    libopenmpi-dev \
                    openmpi-bin \
                    python-dev \
