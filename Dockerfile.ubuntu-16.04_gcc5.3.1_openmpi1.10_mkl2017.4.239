@@ -16,42 +16,35 @@ RUN apt -y update; \
                    openmpi-bin \
                    python-dev \
                    python-pip \
-                   wget
+                   wget; \
+    rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
 
-# Download MKL
-ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz l_mkl_2017.4.239.tgz
-# Install MKL
-RUN mkdir -p l_mkl_2017.4.239; \
-    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1
-ADD https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg l_mkl_2017.4.239/silent-mkl.cfg
-RUN cd l_mkl_2017.4.239; \
-    ./install.sh --silent=silent-mkl.cfg
-RUN rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239
+# Download and install MKL
+RUN curl -LO http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz; \
+    mkdir -p l_mkl_2017.4.239; \
+    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1; \
+    cd l_mkl_2017.4.239; \
+    curl -LO https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg; \
+    ./install.sh --silent=silent-mkl.cfg; \
+    cd ..; \
+    rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239; \
+    adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder; \
+    adduser mightybuilder sudo; \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-RUN adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder
-RUN adduser mightybuilder sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER mightybuilder
 ENV HOME /home/mightybuilder
 
 WORKDIR $HOME
 
-# Install more dependencies
-RUN mkdir -p $HOME/Deps
-# Download and install CMake 3.10.0
-RUN cd $HOME/Deps; \
+RUN mkdir -p $HOME/Deps; \
+    cd $HOME/Deps; \
     mkdir -p cmake-3.10.0; \
-    curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
-ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
-# Upgrade pip, install virtualenv and put it on PATH
-RUN pip install --user --upgrade pip virtualenv
-ENV PATH $HOME/.local/bin:$PATH
+    curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1; \
+    pip install --user --upgrade pip virtualenv
+ENV PATH $HOME/Deps/cmake-3.10.0/bin:$HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-# Export MKLROOT and MATH_ROOT
 ENV MKLROOT=/opt/intel/compilers_and_libraries_2017.5.239/linux/mkl
 ENV MATH_ROOT=$MKLROOT
-
-# Say hello to the world!
-RUN echo "Hello, world! This is robertodr/ubuntu-16.04_gcc5.3.1_openmpi1.10_mkl2017.4.239"
