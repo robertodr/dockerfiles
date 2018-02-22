@@ -16,6 +16,7 @@ RUN apt -y update && \
                    openmpi-bin \
                    python-dev \
                    python-pip \
+                   zlib1g-dev \
                    wget && \
     rm -rf /var/lib/apt/lists/*
 
