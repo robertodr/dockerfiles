@@ -14,17 +14,11 @@ before_install:
         dockerfile=$file
         image=${dockerfile#Dockerfile.}
         # Put Travis to sleep
-        travis_wait 40 sleep infinity &
-        sleep_PID=$!
-        echo $sleep_PID
+        travis_wait 40 sleep 30m &
         docker build --tag "$DOCKER_USERNAME"/$image --file $dockerfile .
-        kill -9 $sleep_PID
         docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_PASSWORD"
-        travis_wait 20 sleep infinity &
-        sleep_PID=$!
-        echo $sleep_PID
+        travis_wait 40 sleep 30m &
         docker push "$DOCKER_USERNAME"/$image
-        kill -9 $sleep_PID
       fi
     done
 
