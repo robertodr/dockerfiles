@@ -2,8 +2,8 @@ FROM ubuntu:16.04
 
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
 
-RUN apt -y update; \
-    apt -y upgrade; \
+RUN apt -y update && \
+    apt -y upgrade && \
     apt -y install bzip2 \
                    cpio \
                    curl \
@@ -13,54 +13,63 @@ RUN apt -y update; \
                    git \
                    libatlas-dev \
                    libboost-all-dev \
+                   libhwloc-dev \
                    liblapack-dev \
-                   libopenmpi-dev \
-                   openmpi-bin \
+                   libnuma-dev \
                    python-dev \
                    python-pip \
-                   wget
+                   wget && \
+    rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
 
+RUN adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder && \
+    adduser mightybuilder sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER mightybuilder
+ENV HOME /home/mightybuilder
+
+WORKDIR $HOME
+
 # Download and install PGI
-# Note: ADD doesn't seem to work for this tarball...
-RUN curl -LO https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz; \
-    mkdir -p pgilinux-2017-174-x86_64; \
-    tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1
-ENV PGI /opt/pgi
-ENV PGI_SILENT "true"
-ENV PGI_ACCEPT_EULA "accept"
-ENV PGI_INSTALL_DIR $PGI
-ENV PGI_INSTALL_TYPE "single"
-ENV PGI_INSTALL_NVIDIA "false"
-ENV PGI_INSTALL_AMD "false"
-ENV PGI_INSTALL_MPI "false"
-ENV PGI_MPI_GPU_SUPPORT "false"
-RUN cd pgilinux-2017-174-x86_64; \
-   ./install
-RUN rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64
+RUN mkdir -p $HOME/Deps && \
+    cd $HOME/Deps && \
+    wget -O pgilinux-2017-174-x86_64.tar.gz "https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz?dl=1" && \
+    mkdir -p pgilinux-2017-174-x86_64 && \
+    tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1 && \
+    cd pgilinux-2017-174-x86_64 && \
+    # Options for silent install
+    export PGI_SILENT=true && \
+    export PGI_ACCEPT_EULA=accept && \
+    export PGI_INSTALL_DIR=$HOME/Deps/pgi && \
+    export PGI_INSTALL_TYPE=single && \
+    export PGI_INSTALL_NVIDIA=false && \
+    export PGI_INSTALL_MANAGED=true && \
+    export PGI_INSTALL_JAVA=false && \
+    export PGI_INSTALL_AMD=false && \
+    export PGI_INSTALL_MPI=true && \
+    export PGI_MPI_GPU_SUPPORT=false && \
+    ./install && \
+    cd $HOME/Deps && \
+    rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64 && \
+    mkdir -p cmake && \
+    mkdir -p cmake-3.5.2 && \
+    cmake_url="https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz" && \
+    target_path=$HOME/Deps/cmake/cmake-3.5.2 && \
+    curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
+    mkdir -p cmake-3.10.2 && \
+    cmake_url="https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz" && \
+    target_path=$HOME/Deps/cmake/cmake-3.10.2 && \
+    curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
+    pip install --user --upgrade pip virtualenv
 
-# Environment variables for PGI
-ENV PGI /opt/pgi
-ENV PATH $PGI/linux86-64/17.4/bin:$PGI/linux86-64/17.4/mpi/mvapich/bin:$PATH
-ENV MANPATH $MANPATH:$PGI/linux86-64/17.4/man:$PGI/linux86-64/17.4/mpi/mvapich/man
+ENV PGI_VERSION 17.4
+ENV PGI_HOME    $HOME/Deps/pgi/linux86-64/$PGI_VERSION
+ENV PGI_BIN_DIR $PGI_HOME/bin
+ENV PGI_LIB_DIR $PGI_HOME/lib
+ENV PGI_MAN_DIR $PGI_HOME/man
 ENV LM_LICENSE_FILE $LM_LICENSE_FILE:$PGI/license.dat
-
-WORKDIR /root
-ENV HOME /root
-
-# Install more dependencies
-RUN mkdir -p $HOME/Deps
-# Download and install CMake 3.10.0
-RUN cd $HOME/Deps; \
-    mkdir -p cmake-3.10.0; \
-    curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1
-ENV PATH $HOME/Deps/cmake-3.10.0/bin:$PATH
-# Upgrade pip
-RUN pip install --upgrade pip
-# Install virtualenv and put it on PATH
-RUN pip install --user virtualenv
-ENV PATH $HOME/.local/bin:$PATH
-ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-
-RUN echo "Hello, world! This is robertodr/ubuntu-16.04_pgi17.4"
+ENV PATH $PGI_HOME/bin:$PGI_HOME/mpi/openmpi/bin:$HOME/Deps/cmake-3.10.0/bin:$HOME/.local/bin:$PATH
+ENV LD_LIBRARY_PATH $PGI_LIB_DIR:$HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+ENV MANPATH $PGI_MAN_DIR:$MANPATH
