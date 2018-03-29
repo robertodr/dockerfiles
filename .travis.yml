@@ -9,6 +9,8 @@ env:
 before_install:
   - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
   - echo $CHANGED_FILES
+script:
+  - python -c "import sys; print(sys.version)"
 after_success:
   - |
     for file in $CHANGED_FILES; do
