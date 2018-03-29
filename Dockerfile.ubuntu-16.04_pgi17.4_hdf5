@@ -4,23 +4,33 @@ MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
 
 SHELL ["/bin/bash", "-c"]
 
-RUN cd $HOME/Deps && \
-    mkdir -p ninja-1.7.2 && \
-    curl -L https://goo.gl/4g5Jjv | tar -xz -C ninja-1.7.2 --strip-components=1 && \
+RUN mkdir -p $HOME/Downloads && \
     cd $HOME/Deps && \
-    # Download and install Eigen 3.3
-    curl -L http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar xz && \
-    cd eigen-eigen-5a0156e40feb && \
-    cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen-3.3.4 >/dev/null 2>&1 && \
-    cmake --build build_eigen -- install >/dev/null 2>&1 && \
-    cd $HOME/Deps && \
-    rm -rf eigen-eigen-5a0156e40feb && \
-    # Download and install HDF5
-    mkdir -p hdf5-1.10.1 && \
-    curl -L https://goo.gl/Pvreb8 | tar -xj -C hdf5-1.10.1 --strip-components=1 && \
+    mkdir -p ninja && \
+    curl -Ls https://goo.gl/4g5Jjv | tar -xz -C ninja --strip-components=1 && \
+    echo "-- Done with Ninja" && \
+    cd $HOME/Downloads && \
+    mkdir -p eigen && \
+    curl -Ls http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar -xz -C eigen --strip-components=1 && \
+    cd eigen && \
+    cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen &> /dev/null && \
+    cmake --build build_eigen -- install &>/dev/null && \
+    echo "-- Done with Eigen 3.3.4" && \
+    rm -rf eigen && \
+    cd $HOME/Downloads && \
+    curl -Ls https://goo.gl/Pvreb8 | tar -xj -C hdf5-1.10.1 --strip-components=1 && \
     cd hdf5-1.10.1 && \
     CC=mpicc FC=mpif90 CXX=mpic++ ./configure --prefix=$HOME/Deps/hdf5-1.10.1 --enable-build-mode=debug \
-              --enable-shared --enable-fortran --enable-parallel && \
-    make install > /dev/null 2>&1
-ENV PATH $HOME/Deps/ninja-1.7.2:$PATH
-ENV LD_LIBRARY_PATH $HOME/Deps/hdf5-1.10.1/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+              --enable-shared --enable-fortran --enable-parallel &> /dev/null && \
+    make install &> /dev/null && \
+    echo "-- Done with HDF5 1.10.1" && \
+    cd $HOME/Downloads && \
+    curl -Ls https://repo.continuum.io/archive/Anaconda2-5.1.0-Linux-x86_64.sh > conda.sh && \
+    bash conda.sh -b -p $HOME/Deps/conda && \
+    PATH=$HOME/Deps/conda/bin${PATH:+:$PATH} && \
+    conda config --set always_yes yes --set changeps1 no &> /dev/null && \
+    conda update -q conda &> /dev/null && \
+    conda info -a && \
+    echo "-- Done with Anaconda 5.1.0"
+ENV PATH $HOME/Deps/ninja:$PATH
+ENV LD_LIBRARY_PATH $HOME/Deps/hdf5/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
