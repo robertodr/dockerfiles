@@ -1,14 +1,16 @@
 sudo: required
-
 language: python
-
-services:
-  - docker
-
+services: docker
+env:
+  global:
+  - secure: cDE4iiiJXidn15nfrWuShVDv8t/yKOzYl+m/EcQZxxAcVkDiXLl24+89F3r/sf8Ow3iFvxDDcu/wFjAu/AmqEjaLD8dgMWVsM92VbU5l93rwUrAQFrUr/tCgS/ZUcbhHjYpkgRxrytYbh90JjukEPyt9t1UOnKYPKMSxp4G4qJDnMIowKBD3+4Icy1kcAPh7euEvymOSKZgysIDTCLhx2E2IeJdktAoq6KLQmsX4jTOkGyZwQLBqLP0C6UvsMgdq/Ph8srFZZQBIK5+IFQKZjcptSlcKFLHElPaVu2yl9yf0QM+CX6rw//XnxDeexvO38XAskHNXxt0BGZebpBVybffmdrlgpuTy/rxvvRQXiYkI9vrf5EaZnMg1wNTICk64uVlv3xgyicfvcOcHiualYyg1vQ0sAacPCimZaLbBiee88lmhgjFDd2HyfhVFMBEg41szH6nnwXOql8k6CDNkV93a5ayTXtBkJCmujkD2S4nknVSlK5x32hTyHCEBgSOjJSzKI0KXcG5LbnMFx4+1sMLIDqxjwtQUwzi68Jt/pw29vpH/wcnkWP3bBmBGpATiPGFMlTVJGH2rqbv18wkhvpJRwjDBST6PpAzyft7zDIZXmv1ss/N9JfzOPPPklSG8UXgaC2N3qMnotVXQFO66kkMbn19myfkpiqvwOMovoLc=
+  - secure: RB4214rWulY7R7UusJXoEyKpDsaNdWEl+lUvOzOmZsGW3668TuP0t7d+jfz0v/dJK7qxRHO4th4Yg4WQQDrsI+tX6+5uDy+0qibuXg/nlF/bCZ2dAbChYTRBdiu+nl8Re/XBuXSbYa0ywbUggaAsWPxPHq5LMV2szVzgq/LK0mQ2m72ZdXBoknm1wWycnqUcNLPYtnPP7AAqVvwoOPD+llG1W+m23eRuArBfHCisNQpchWYCZAuITcE0hx6jEww2C/HjH4eOuxZNFOjmgFv1bivg/ueZbRxIwGSoPCDR3nsnyAAKQXmq/RznTmiJF45HgBgxcEq8n0JK6ZBxJoKPxC65VxfUDpzGgiHZF7ae5VcCP7Q7wXBllxTwNaJ3ZP6ZJOj3JUMJNBpgjnXtn5pVqLTMMUr/SxzuFIxzOcIUbUm3bajmg0fSsVBLkPeRrAtSQHVE2A42VUv7bUAjXyCnpQFHJFn57Gg3AuQzN2WtzW16xNUpMfK7eKDTasyqQ0iL+NX3WE5ul8piTEqrhTYjka9SY9WOHWDCGMer4tpvg0hzPnwUX6ig1aFF44wqGpAcYA7M13nH3j4XIBtaWLY8E7Da1pu/0IahX9Ekpib6HAmr9R2X9fMd2Ivu+ZCIWdqqapV/7Afh15GXJF1pThq4LCelUYL5tsNeXJynOWzITp4=
+  - secure: l3E4OFeoSMw+FQ6Z4hujceMLjHJ2T1+WcRJpJwGr+lPO11fwDSQfGnhIA0Y87F4xTg5u3fkQ0lPfoWcvyCX+IIbwqwDthhDliuVjK+DJWHuh7rwEYp8zRcrr6cCYjhth8uxdBmAr8fG2v3s0XronTwLt7IED6dH/+8RGzVkFHTPCIDZfeT0baVJiInw/6uZTPEdG0kWBLzXI6eIbSJ+Qmee2qqgunrgq5EbzTcViY11rS6eLPtIzJcfHiIh3k3ALAU2pnv4VVtljFfQbgv/eOjOQnDjK9SwvceBZD7BDr8w9fNeijtV0RbR6Fe3vTK8gh0T0XaqBcX54lpD9Stqj/u1xYQSQH33YW88htbNVFJU84qRvfG3j2YJZ0mcQBF/UWHhvESYenBFPfQKqgEVnP+KSjx2Wo7L47opdNVx7VqnrXT1OoiduPcAYnTnr9fSzZV+kwrm45XSWulHGXQWxBF/cpe++cGSYbOR4rnTsI4KjHUi1R1HZnUbU4YR69zB2l+/bcIXDORTzkLhiZHyNVXbcuEaHSrcKN+08Y2Lfr41f7Hgd2cvSMLlPYu9QwPw54oWhUQWFCIWsYLtFpjQve/VG46vCzkL6TlcFarRHTfOCBCrOjHa7mFtkUfslT8uknGYKsOCSbNophEz3uzULCpsIl6bLF7QG/fZ72d3/jtA=
 before_install:
   - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
   - echo $CHANGED_FILES
-  - >
+after_success:
+  - |
     for file in $CHANGED_FILES; do
       if [[ $file =~ "Dockerfile" ]]; then
         dockerfile=$file
@@ -18,6 +20,3 @@ before_install:
         travis_wait 20 docker push "$DOCKER_USERNAME"/$image
       fi
     done
-
-script:
-  - python -c "import sys; print(sys.version)"
