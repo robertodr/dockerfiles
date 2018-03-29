@@ -32,6 +32,7 @@ ENV HOME /home/mightybuilder
 
 WORKDIR $HOME
 
+# Download and install PGI, CMake 3.5.2, CMake 3.10.2 and virtualenv
 RUN mkdir -p $HOME/Deps && \
     cd $HOME/Deps && \
     wget -O pgilinux-2017-174-x86_64.tar.gz "https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz?dl=1" && \
