@@ -32,14 +32,12 @@ ENV HOME /home/mightybuilder
 
 WORKDIR $HOME
 
-# Download and install PGI
 RUN mkdir -p $HOME/Deps && \
     cd $HOME/Deps && \
     wget -O pgilinux-2017-174-x86_64.tar.gz "https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz?dl=1" && \
     mkdir -p pgilinux-2017-174-x86_64 && \
     tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1 && \
     cd pgilinux-2017-174-x86_64 && \
-    # Options for silent install
     export PGI_SILENT=true && \
     export PGI_ACCEPT_EULA=accept && \
     export PGI_INSTALL_DIR=$HOME/Deps/pgi && \
@@ -53,12 +51,10 @@ RUN mkdir -p $HOME/Deps && \
     ./install && \
     cd $HOME/Deps && \
     rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64 && \
-    # Install CMake 3.5.2
     export cmake_url="https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz" && \
     export target_path=$HOME/Deps/cmake/cmake-3.5.2 && \
     mkdir -p $target_path && \
     curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
-    # Install CMake 3.10.2
     export cmake_url="https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz" && \
     export target_path=$HOME/Deps/cmake/cmake-3.10.2 && \
     mkdir -p $target_path && \

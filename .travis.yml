@@ -13,9 +13,11 @@ before_install:
       if [[ $file =~ "Dockerfile" ]]; then
         dockerfile=$file
         image=${dockerfile#Dockerfile.}
-        travis_wait 40 docker build --tag "$DOCKER_USERNAME"/$image --file $dockerfile .
+        # Put Travis to sleep
+        travis_wait 40 sleep infinity &
+        docker build --tag "$DOCKER_USERNAME"/$image --file $dockerfile .
         docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_PASSWORD"
-        travis_wait 20 docker push "$DOCKER_USERNAME"/$image
+        docker push "$DOCKER_USERNAME"/$image
       fi
     done
 
