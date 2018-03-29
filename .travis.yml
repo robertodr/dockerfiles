@@ -17,8 +17,8 @@ after_success:
       if [[ $file =~ "Dockerfile" ]]; then
         dockerfile=$file
         image=${dockerfile#Dockerfile.}
-        docker build --tag "$DOCKER_USERNAME"/$image --file $dockerfile .
-        docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_PASSWORD"
-        travis_wait 20 docker push "$DOCKER_USERNAME"/$image
+        docker build -t "$DOCKER_USERNAME"/$image -f $dockerfile .
+        docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        docker push "$DOCKER_USERNAME"/$image
       fi
     done
