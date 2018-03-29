@@ -19,7 +19,8 @@ RUN cd $HOME/Deps && \
     mkdir -p hdf5-1.10.1 && \
     curl -L https://goo.gl/Pvreb8 | tar -xj -C hdf5-1.10.1 --strip-components=1 && \
     cd hdf5-1.10.1 && \
-    ./configure --prefix=$HOME/Deps/hdf5-1.10.1 --enable-build-mode=debug --enable-fortran --enable-shared --enable-parallel > /dev/null 2>&1 && \
+    CC=mpicc FC=mpif90 CXX=mpic++ ./configure --prefix=$HOME/Deps/hdf5-1.10.1 --enable-build-mode=debug \
+              --enable-shared --enable-fortran --enable-parallel && \
     make install > /dev/null 2>&1
 ENV PATH $HOME/Deps/ninja-1.7.2:$PATH
 ENV LD_LIBRARY_PATH $HOME/Deps/hdf5-1.10.1/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
