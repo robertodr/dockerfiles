@@ -11,7 +11,7 @@ RUN mkdir -p $HOME/Downloads && \
     echo "-- Done with Ninja" && \
     cd $HOME/Downloads && \
     mkdir -p eigen && \
-    curl -Ls http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar -xz -C eigen --strip-components=1 && \
+    curl -L http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar -xz -C eigen --strip-components=1 && \
     cd eigen && \
     cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen &> /dev/null && \
     cmake --build build_eigen -- install &>/dev/null && \
