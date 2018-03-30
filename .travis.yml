@@ -17,7 +17,7 @@ before_install:
 - echo $CHANGED_FILES
 - mkdir -p Deps
 - cd Deps
-- travis_wait 30 curl -LOs "$PGI_URL"
+- travis_wait 30 curl -LO "$PGI_URL"
 - travis_wait 30 curl -LOs "$MKL_URL"
 - travis_wait 30 curl -LOs "$INTEL_URL"
 - cd $TRAVIS_BUILD_DIR
