@@ -1,24 +1,34 @@
 sudo: required
 language: python
 services: docker
+cache:
+  directories:
+    - $HOME/Deps
 env:
   global:
   - secure: cDE4iiiJXidn15nfrWuShVDv8t/yKOzYl+m/EcQZxxAcVkDiXLl24+89F3r/sf8Ow3iFvxDDcu/wFjAu/AmqEjaLD8dgMWVsM92VbU5l93rwUrAQFrUr/tCgS/ZUcbhHjYpkgRxrytYbh90JjukEPyt9t1UOnKYPKMSxp4G4qJDnMIowKBD3+4Icy1kcAPh7euEvymOSKZgysIDTCLhx2E2IeJdktAoq6KLQmsX4jTOkGyZwQLBqLP0C6UvsMgdq/Ph8srFZZQBIK5+IFQKZjcptSlcKFLHElPaVu2yl9yf0QM+CX6rw//XnxDeexvO38XAskHNXxt0BGZebpBVybffmdrlgpuTy/rxvvRQXiYkI9vrf5EaZnMg1wNTICk64uVlv3xgyicfvcOcHiualYyg1vQ0sAacPCimZaLbBiee88lmhgjFDd2HyfhVFMBEg41szH6nnwXOql8k6CDNkV93a5ayTXtBkJCmujkD2S4nknVSlK5x32hTyHCEBgSOjJSzKI0KXcG5LbnMFx4+1sMLIDqxjwtQUwzi68Jt/pw29vpH/wcnkWP3bBmBGpATiPGFMlTVJGH2rqbv18wkhvpJRwjDBST6PpAzyft7zDIZXmv1ss/N9JfzOPPPklSG8UXgaC2N3qMnotVXQFO66kkMbn19myfkpiqvwOMovoLc=
   - secure: RB4214rWulY7R7UusJXoEyKpDsaNdWEl+lUvOzOmZsGW3668TuP0t7d+jfz0v/dJK7qxRHO4th4Yg4WQQDrsI+tX6+5uDy+0qibuXg/nlF/bCZ2dAbChYTRBdiu+nl8Re/XBuXSbYa0ywbUggaAsWPxPHq5LMV2szVzgq/LK0mQ2m72ZdXBoknm1wWycnqUcNLPYtnPP7AAqVvwoOPD+llG1W+m23eRuArBfHCisNQpchWYCZAuITcE0hx6jEww2C/HjH4eOuxZNFOjmgFv1bivg/ueZbRxIwGSoPCDR3nsnyAAKQXmq/RznTmiJF45HgBgxcEq8n0JK6ZBxJoKPxC65VxfUDpzGgiHZF7ae5VcCP7Q7wXBllxTwNaJ3ZP6ZJOj3JUMJNBpgjnXtn5pVqLTMMUr/SxzuFIxzOcIUbUm3bajmg0fSsVBLkPeRrAtSQHVE2A42VUv7bUAjXyCnpQFHJFn57Gg3AuQzN2WtzW16xNUpMfK7eKDTasyqQ0iL+NX3WE5ul8piTEqrhTYjka9SY9WOHWDCGMer4tpvg0hzPnwUX6ig1aFF44wqGpAcYA7M13nH3j4XIBtaWLY8E7Da1pu/0IahX9Ekpib6HAmr9R2X9fMd2Ivu+ZCIWdqqapV/7Afh15GXJF1pThq4LCelUYL5tsNeXJynOWzITp4=
   - secure: l3E4OFeoSMw+FQ6Z4hujceMLjHJ2T1+WcRJpJwGr+lPO11fwDSQfGnhIA0Y87F4xTg5u3fkQ0lPfoWcvyCX+IIbwqwDthhDliuVjK+DJWHuh7rwEYp8zRcrr6cCYjhth8uxdBmAr8fG2v3s0XronTwLt7IED6dH/+8RGzVkFHTPCIDZfeT0baVJiInw/6uZTPEdG0kWBLzXI6eIbSJ+Qmee2qqgunrgq5EbzTcViY11rS6eLPtIzJcfHiIh3k3ALAU2pnv4VVtljFfQbgv/eOjOQnDjK9SwvceBZD7BDr8w9fNeijtV0RbR6Fe3vTK8gh0T0XaqBcX54lpD9Stqj/u1xYQSQH33YW88htbNVFJU84qRvfG3j2YJZ0mcQBF/UWHhvESYenBFPfQKqgEVnP+KSjx2Wo7L47opdNVx7VqnrXT1OoiduPcAYnTnr9fSzZV+kwrm45XSWulHGXQWxBF/cpe++cGSYbOR4rnTsI4KjHUi1R1HZnUbU4YR69zB2l+/bcIXDORTzkLhiZHyNVXbcuEaHSrcKN+08Y2Lfr41f7Hgd2cvSMLlPYu9QwPw54oWhUQWFCIWsYLtFpjQve/VG46vCzkL6TlcFarRHTfOCBCrOjHa7mFtkUfslT8uknGYKsOCSbNophEz3uzULCpsIl6bLF7QG/fZ72d3/jtA=
+  - secure: RYKl1N1Jfwk+/EDDwqhzj60iy43zVc6rOE9XxQpc7cKU5/Y9iA5/mnQjwEcsHDhjYbMJpKVnnUZZuzCXEX000D6qP3pgYWsVj/NBvhtIatlQMNKJFCSeHpSdwkNi7bRSVXh5cFv1EVL8XVMV/amhV+mZDX/APOBCM1CNjpvDJXplhiyzJnOulMUNH6lmRhmStEs7Z4+YAVvAUqtxX3rf3Z2E5ViYOOQppIUm7cgV7qndXuaY/N7Xtop5w4qBJjn3oq4uf4AGYaURWil8WAcDNA0DaKBcFLLkRVHYcW1DWme6UkR+ITOjlgoto3huuxJC+vYE3zQFYDOHXaFMfMtPn6I8m6AJ2RNekxLTqOBNok+o+El2a7lJn9coTuojKpT8Og/Fy2eVp/j67kJqj1W+8fGlInf6nUFClF3etQqlm9b/mv3htGsS/30jGVlD5jvbrsjGYFtMYrKjKA57EBDNhGH4kHF4huEE8j7DChFek5oZSNyy+3oMmg+gDEGV32kTzwDxIIiJnjscBE9SKZoltdb9BLnTYF0UU3UlHsW0Ka75PQINPuuRoOg0S0wyhGF9oO7Gs/RmIZKLQNI+pPLOwNE0l/NfCEnJTX/B2JK495JSJyJtWWvHuVKygnaOzyeIKRE2wIcUjXzCHkgySh1QIepQmbWQ4Bv6pXIntKsBpg8=
+  - secure: jE/yobRVR25iX2+7njXs/yA9hX5QUec+wRRDcfL4iL0FEr9zj7qh9rC9h6Krx5gjjfQNSzhC+o6xOszDzETyuH5/Zn5IOUYBBeTiv2+OMLjs5hUR4QsGO17RBcDOtrgzNVeLTz7n7s/6oMWBLEmQ9bGi3iwc64SH93JibD7lVWH75kgjSMe3p9YWXYEbU/ybokU91gWmHfWAEH72p7nfu2AnTZtGK7HMKMKq6jjAJhqr6fVuRagXt8Y4VWHk4U0HAbNQqpHdHlgVguyJd2TrFED6ndpdbEZaN3Jo5Przu4/BWn0TPx1RQwM5fXLLzh0OnoPYbYqiVKD7zpTE/ZsTFI4iK9iNHWjNMO2LabgXjCLyg8or05p7sg1wf1TJhi02melLQyTuDHwm55sV96fDCFlBE2uVRLAnDIsy/KLY0nSD128EPqLpSSYqfm/w0Iddg8JSrcKSbXlw/kQuAT/idX5Nh9TDH/swBH+DQdIE3e9K65WrJyRUdo5GlwPAFNl1kKdMVqgTgTfP/D+pr4u9WPOYY9pZzYG4Fk9YROI+aeW599MsNE9Jq4U6myeNwOQdK+6sZLtFxKF0oeZphOtPn0xu4nxI7IL4TZxV8Y5eLEeXvHZc0Yc15nKPfTdo1jvTRAJK5Bp5CtKP9TYeK4Up7t08OULB4UsiatVIa3QQKC4=
+  - secure: ozWx996ew+10krTcHarvAnuSpMFjW+kCatfzJgGESNTcla0VjE9rFZqZ4zJA252zJZ1SLLc1W/CHFn4LAGkx03Wx1ejBeKZQktYID57ApyYtC04kavOki2EOinxowQ3hp64y6fA32gdfkHrPEp2AtVIxs2QRYvbBFpYDlSpM4m97fBT2yJefP5pexeWhcnhGMK/SnaOFsf+Oze7FwS7l1I7ynWgP0ZJ4csoPJwaBqf7Pp7u1RBp10EcttEECDQ/Zh0Gzu+MzEpf6amAMVHqzmMMykb6bVLHLkDdeFe2TO0/0jEFwQj4U+BSiijt/YI8qqdl/zfRgty0mT4tlRX3SXQ9hkYfpHvshmcaUi5IyJtwcThpNx/8oAhe70M+acTppqT49sSS3sQA8OI49ZdS8bQ1OKvLlHF6lMmumfE28eNvsYEpb8DiM8RpOe+S0EohNxPMy3F8Krom7HctFJDjBTf/4aXCpaK8sMOFvOYaop+IHW/RgxIDFuxi+0FucrmXhB8rjUZN02x+3zb6Lpcd/Fdtct9Q2zde4qoLSulttQCl4z0YRYdwqGTV2rr/pO7sorPf9L9ULEMmj0u/bichPcGg6GFV2eQYZQNTcnaKQw4hmfQ2c6X1e47QXfxur9WTKsdk2SVMi//tVXuCv2EDEf1fUXm61rJXYVMgp1T/87zI=
 before_install:
-  - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
-  - echo $CHANGED_FILES
+- CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
+- echo $CHANGED_FILES
+- mkdir -p Deps
+- travis_wait 30 curl -Ls "$PGI_URL"
+- travis_wait 30 curl -Ls "$MKL_URL"
+- travis_wait 30 curl -Ls "$INTEL_URL"
 script:
-  - python -c "import sys; print(sys.version)"
+- python -c "import sys; print(sys.version)"
 after_success:
-  - |
-    for file in $CHANGED_FILES; do
-      if [[ $file =~ "Dockerfile" ]]; then
-        dockerfile=$file
-        image=${dockerfile#Dockerfile.}
-        travis_wait 30 docker build -t "$DOCKER_USERNAME"/$image -f $dockerfile .
-        docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-        docker push "$DOCKER_USERNAME"/$image
-      fi
-    done
+- |
+  for file in $CHANGED_FILES; do
+    if [[ $file =~ "Dockerfile" ]]; then
+      dockerfile=$file
+      image=${dockerfile#Dockerfile.}
+      travis_wait 30 docker build -t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker push "$DOCKER_USERNAME"/$image
+    fi
+  done
