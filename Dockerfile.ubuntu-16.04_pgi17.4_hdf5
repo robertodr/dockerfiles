@@ -10,18 +10,21 @@ RUN mkdir -p $HOME/Downloads && \
     curl -Ls https://goo.gl/4g5Jjv | tar -xz -C ninja --strip-components=1 && \
     echo "-- Done with Ninja" && \
     cd $HOME/Downloads && \
-    curl -Ls http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz | tar -xz && \
+    curl -LOs http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz && \
+    tar xzf 3.3.4.tar.gz &>/dev/null && \
     cd eigen-eigen-5a0156e40feb && \
-    cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen &> /dev/null && \
-    cmake --build build_eigen -- install &>/dev/null && \
+    $HOME/Deps/cmake/3.10.2/bin/cmake -H. -Bbuild_eigen -DCMAKE_INSTALL_PREFIX=$HOME/Deps/eigen &>/dev/null && \
+    $HOME/Deps/cmake/3.10.2/bin/cmake --build build_eigen -- install &>/dev/null && \
     cd $HOME/Downloads && \
-    rm -rf eigen-eigen-5a0156e40feb && \
+    rm -rf eigen-eigen-5a0156e40feb 3.3.4.tar.gz && \
     echo "-- Done with Eigen 3.3.4" && \
-    curl -Ls https://goo.gl/Pvreb8 | tar -xj -C hdf5-1.10.1 --strip-components=1 && \
+    curl -LOs https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
+    tar xjf hdf5-1.10.1.tar.bz2 &> /dev/null && \
     cd hdf5-1.10.1 && \
-    CC=mpicc FC=mpif90 CXX=mpic++ ./configure --prefix=$HOME/Deps/hdf5-1.10.1 --enable-build-mode=debug \
-              --enable-shared --enable-fortran --enable-parallel &> /dev/null && \
+    CC=pgcc FC=pgf90 ./configure --prefix=$HOME/Deps/hdf5 --enable-build-mode=debug \
+              --enable-shared --enable-fortran &> /dev/null && \
     make install &> /dev/null && \
+    rm -rf hdf5-1.10.1 hdf5-1.10.1.tar.bz2 && \
     cd $HOME/Downloads && \
     echo "-- Done with HDF5 1.10.1" && \
     curl -Ls https://repo.continuum.io/archive/Anaconda2-5.1.0-Linux-x86_64.sh > conda.sh && \
