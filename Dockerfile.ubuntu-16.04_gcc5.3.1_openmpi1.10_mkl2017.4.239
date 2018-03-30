@@ -22,8 +22,7 @@ RUN apt -y update && \
 
 SHELL ["/bin/bash", "-c"]
 
-# Download and install MKL
-RUN curl -LO http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz && \
+RUN curl -LOs http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz && \
     mkdir -p l_mkl_2017.4.239 && \
     tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1 && \
     cd l_mkl_2017.4.239 && \
@@ -42,10 +41,13 @@ WORKDIR $HOME
 
 RUN mkdir -p $HOME/Deps && \
     cd $HOME/Deps && \
-    mkdir -p cmake-3.10.0 && \
-    curl -L https://goo.gl/91k4aJ | tar -xz -C cmake-3.10.0 --strip-components=1 && \
+    export cmake_url="https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz" && \
+    export target_path=$HOME/Deps/cmake && \
+    mkdir -p $target_path && \
+    curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
+    rm -rf cmake-3.10.2-Linux-x86_64.tar.gz && \
     pip install --user --upgrade pip virtualenv
-ENV PATH $HOME/Deps/cmake-3.10.0/bin:$HOME/.local/bin:$PATH
+ENV PATH $HOME/Deps/cmake/bin:$HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 ENV MKLROOT=/opt/intel/compilers_and_libraries_2017.5.239/linux/mkl
 ENV MATH_ROOT=$MKLROOT
