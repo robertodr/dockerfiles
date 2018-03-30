@@ -16,9 +16,11 @@ before_install:
 - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
 - echo $CHANGED_FILES
 - mkdir -p Deps
-- travis_wait 30 curl -Ls "$PGI_URL"
-- travis_wait 30 curl -Ls "$MKL_URL"
-- travis_wait 30 curl -Ls "$INTEL_URL"
+- cd Deps
+- travis_wait 30 curl -LOs "$PGI_URL"
+- travis_wait 30 curl -LOs "$MKL_URL"
+- travis_wait 30 curl -LOs "$INTEL_URL"
+- cd $TRAVIS_BUILD_DIR
 script:
 - python -c "import sys; print(sys.version)"
 after_success:
