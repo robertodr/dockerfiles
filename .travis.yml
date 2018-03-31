@@ -13,26 +13,27 @@ env:
   - secure: jE/yobRVR25iX2+7njXs/yA9hX5QUec+wRRDcfL4iL0FEr9zj7qh9rC9h6Krx5gjjfQNSzhC+o6xOszDzETyuH5/Zn5IOUYBBeTiv2+OMLjs5hUR4QsGO17RBcDOtrgzNVeLTz7n7s/6oMWBLEmQ9bGi3iwc64SH93JibD7lVWH75kgjSMe3p9YWXYEbU/ybokU91gWmHfWAEH72p7nfu2AnTZtGK7HMKMKq6jjAJhqr6fVuRagXt8Y4VWHk4U0HAbNQqpHdHlgVguyJd2TrFED6ndpdbEZaN3Jo5Przu4/BWn0TPx1RQwM5fXLLzh0OnoPYbYqiVKD7zpTE/ZsTFI4iK9iNHWjNMO2LabgXjCLyg8or05p7sg1wf1TJhi02melLQyTuDHwm55sV96fDCFlBE2uVRLAnDIsy/KLY0nSD128EPqLpSSYqfm/w0Iddg8JSrcKSbXlw/kQuAT/idX5Nh9TDH/swBH+DQdIE3e9K65WrJyRUdo5GlwPAFNl1kKdMVqgTgTfP/D+pr4u9WPOYY9pZzYG4Fk9YROI+aeW599MsNE9Jq4U6myeNwOQdK+6sZLtFxKF0oeZphOtPn0xu4nxI7IL4TZxV8Y5eLEeXvHZc0Yc15nKPfTdo1jvTRAJK5Bp5CtKP9TYeK4Up7t08OULB4UsiatVIa3QQKC4=
   - secure: ozWx996ew+10krTcHarvAnuSpMFjW+kCatfzJgGESNTcla0VjE9rFZqZ4zJA252zJZ1SLLc1W/CHFn4LAGkx03Wx1ejBeKZQktYID57ApyYtC04kavOki2EOinxowQ3hp64y6fA32gdfkHrPEp2AtVIxs2QRYvbBFpYDlSpM4m97fBT2yJefP5pexeWhcnhGMK/SnaOFsf+Oze7FwS7l1I7ynWgP0ZJ4csoPJwaBqf7Pp7u1RBp10EcttEECDQ/Zh0Gzu+MzEpf6amAMVHqzmMMykb6bVLHLkDdeFe2TO0/0jEFwQj4U+BSiijt/YI8qqdl/zfRgty0mT4tlRX3SXQ9hkYfpHvshmcaUi5IyJtwcThpNx/8oAhe70M+acTppqT49sSS3sQA8OI49ZdS8bQ1OKvLlHF6lMmumfE28eNvsYEpb8DiM8RpOe+S0EohNxPMy3F8Krom7HctFJDjBTf/4aXCpaK8sMOFvOYaop+IHW/RgxIDFuxi+0FucrmXhB8rjUZN02x+3zb6Lpcd/Fdtct9Q2zde4qoLSulttQCl4z0YRYdwqGTV2rr/pO7sorPf9L9ULEMmj0u/bichPcGg6GFV2eQYZQNTcnaKQw4hmfQ2c6X1e47QXfxur9WTKsdk2SVMi//tVXuCv2EDEf1fUXm61rJXYVMgp1T/87zI=
 before_install:
-- CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
-- echo $CHANGED_FILES
-- mkdir -p Deps
-- cd Deps
-- curl -LO "$PGI_URL"
-- ls Deps
-- curl -LO $MKL_URL
-- ls Deps
-- travis_wait 30 curl -LOs "$INTEL_URL"
-- cd $TRAVIS_BUILD_DIR
+  - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
+  - echo $CHANGED_FILES
+  - mkdir -p $HOME/Deps
+  - cd $HOME/Deps
+  - curl -LO "$PGI_URL"
+  - ls .
+  - curl -LO $MKL_URL
+  - ls .
+  - curl -LO "$INTEL_URL"
+  - ls .
+  - cd $TRAVIS_BUILD_DIR
 script:
-- python -c "import sys; print(sys.version)"
+  - python -c "import sys; print(sys.version)"
 after_success:
-- |
-  for file in $CHANGED_FILES; do
-    if [[ $file =~ "Dockerfile" ]]; then
-      dockerfile=$file
-      image=${dockerfile#Dockerfile.}
-      travis_wait 30 docker build -t "$DOCKER_USERNAME"/$image -f $dockerfile .
-      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-      docker push "$DOCKER_USERNAME"/$image
-    fi
-  done
+  - |
+    for file in $CHANGED_FILES; do
+      if [[ $file =~ "Dockerfile" ]]; then
+        dockerfile=$file
+        image=${dockerfile#Dockerfile.}
+        travis_wait 30 docker build -t "$DOCKER_USERNAME"/$image -f $dockerfile .
+        docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        docker push "$DOCKER_USERNAME"/$image
+      fi
+    done
