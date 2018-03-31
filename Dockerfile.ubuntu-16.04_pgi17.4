@@ -23,20 +23,29 @@ RUN apt -y update && \
 
 SHELL ["/bin/bash", "-c"]
 
-RUN adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder && \
+RUN groupadd mightybuilder && \
+    adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder && \
     adduser mightybuilder sudo && \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+    adduser mightybuilder mightybuilder
 
 USER mightybuilder
 ENV HOME /home/mightybuilder
 
 WORKDIR $HOME
 
-RUN mkdir -p $HOME/Deps && \
-    cd $HOME/Deps && \
-    wget --quiet -O pgilinux-2017-174-x86_64.tar.gz "https://www.dropbox.com/s/aktmjxbfet46xqs/pgilinux-2017-174-x86_64.tar.gz?dl=1" && \
-    mkdir -p pgilinux-2017-174-x86_64 && \
-    tar xzfp pgilinux-2017-174-x86_64.tar.gz -C pgilinux-2017-174-x86_64 --strip-components=1 && \
+ARG BUILD_LOCALLY
+ARG PGI_URL
+COPY --chown=mightybuilder foo.txt $HOME/Deps/pgilinux-2017-174-* $HOME/Deps/
+
+RUN cd $HOME/Deps && \
+    if [ "$BUILD_LOCALLY" = true ]; then \
+      echo "-- Building locally"; \
+      mkdir -p pgilinux-2017-174-x86_64; \
+      curl -Ls $PGI_URL | tar -xz -C pgilinux-2017-174-x86_64 --strip-components=1; \
+    else \
+      echo "-- Building on Travis"; \
+    fi && \
     cd pgilinux-2017-174-x86_64 && \
     export PGI_SILENT=true && \
     export PGI_ACCEPT_EULA=accept && \
@@ -50,16 +59,24 @@ RUN mkdir -p $HOME/Deps && \
     export PGI_MPI_GPU_SUPPORT=false && \
     ./install && \
     cd $HOME/Deps && \
-    rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64 && \
+    if [ "$BUILD_LOCALLY" = true ]; then \
+      echo "-- Cleaning up locally"; \
+      rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64; \
+    else \
+      echo "-- Cleaning up on Travis"; \
+      rm -rf pgilinux-2017-174-x86_64; \
+    fi && \
     export cmake_url="https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz" && \
     export target_path=$HOME/Deps/cmake/3.5.2 && \
+    rm -rf cmake-3.5.2-Linux-x86_64.tar.gz && \
     mkdir -p $target_path && \
     curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
     export cmake_url="https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz" && \
     export target_path=$HOME/Deps/cmake/3.10.2 && \
     mkdir -p $target_path && \
     curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
-    pip install --user --upgrade pip virtualenv
+    rm -rf cmake-3.10.2-Linux-x86_64.tar.gz && \
+    pip install --user virtualenv pipenv --upgrade pip
 
 ENV PGI_VERSION 17.4
 ENV PGI_HOME    $HOME/Deps/pgi/linux86-64/$PGI_VERSION
