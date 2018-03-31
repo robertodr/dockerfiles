@@ -17,7 +17,7 @@ before_install:
 - echo $CHANGED_FILES
 - mkdir -p $HOME/Deps
 - cd $HOME/Deps
-- curl -Ls $PGI_URL | tar -xz
+- curl -Ls $PGI_URL | tar -xz -C pgilinux-2017-174-x86_64/
 - ls .
 - curl -Ls $MKL_URL | tar -xz
 - ls .
