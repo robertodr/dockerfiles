@@ -4,9 +4,10 @@ services: docker
 cache:
   timeout: 7200
   directories:
-  - "$HOME/Deps/pgilinux-2017-174-x86_64"
-  - "$HOME/Deps/l_mkl_2017.4.239"
-  - "$HOME/Deps/parallel_studio_xe_2018_update2_professional_edition"
+  - "$HOME/Downloads/pgilinux-2017-174-x86_64"
+  - "$HOME/Downloads/l_mkl_2017.4.239"
+  - "$HOME/Downloads/parallel_studio_xe_2018_update2_professional_edition"
+  - "$HOME/Downloads/hdf5-1.10.1"
 env:
   global:
   - secure: GfO2uyUDZEwZUMylOEQqGCQ7wr9EZw6qb1z5j9ArBmmsT3r2SwGBTrgL/ytC+wvCa8ufmVg7OxWqbBmFCoOiVX8/UN6quzbkKX9cszl0/OLL32EtWMqQ1HayulEAWyPysPqp5VUljJ18R8H3AbPfEhj0QVh98i7lErIqbe5AiRAECUUjwPK/AGY+oCgaxqJtU25YiFUZZ1gLmVRliIqlMYacQp8MUFLS80KsSIXyl7BclZOUGK2pD9hEykWBzhr34WvTAZi+nSDRfQZdDGScBFa28G2OarY1k9dOdvmvHX0CfcQq5Aw1tVAzF0oqAhVM++mv96N+9O7UJ8QKtj/geFGxfegaZEttMMEsxgdiBw/2YJeUjN+QYr3x1ajUQSJpNkC2eB6VGH3pTds+LHOCI34P0P618wS/sJ3Me7z/sG5oshDq4TCRoDnsKwEEasG4KDFxHJbc+IjcjJZn348kqg4fJYSzxdEv7v1NRIXhzwUZRe1GMIfuv9McL19zHQQjXox5UXkuu0Bb5gI8BbE6ENfwLq2Ae2JAP5lGRIsORUqkOcoME+dL5dq4mgt2o3p2mWh0Cj4gWjBa3UB0b9rl2iDksGrxPAFRVcUFhu4P6D3O9QDOW1NYcqx0WhoxcOuU2oBsJ5OyMSJ4hIgHTKjGXRdIJJ/WtXU3/8fp5hMPnDw=
@@ -18,15 +19,8 @@ env:
 before_install:
   - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
   - echo $CHANGED_FILES
-  - mkdir -p $HOME/Deps
-  - cd $HOME/Deps
-  - curl -Ls $PGI_URL | tar -xz -C pgilinux-2017-174-x86_64 --strip-components=1
-  - ls .; ls pgilinux-2017-174-x86_64
-  - curl -Ls $MKL_URL | tar -xz -C l_mkl_2017.4.239 --strip-components=1
-  - ls .; ls l_mkl_2017.4.239
-  - curl -Ls $INTEL_URL | tar -xz -C parallel_studio_xe_2018_update2_professional_edition --strip-components=1
-  - ls .; ls parallel_studio_xe_2018_update2_professional_edition
-  - cd $TRAVIS_BUILD_DIR
+install:
+  - travis_wait 30 ./dependencies/download_dependencies.sh
 script:
   - python -c "import sys; print(sys.version)"
 after_success:
