@@ -22,6 +22,7 @@ before_install:
 install:
   - ./dependencies/download_dependencies.sh
   - ls $HOME/Downloads
+  - ls $HOME/Downloads/pgilinux
 script:
   - python -c "import sys; print(sys.version)"
 after_success:
