@@ -36,8 +36,7 @@ WORKDIR $HOME
 
 ARG BUILD_LOCALLY
 ARG PGI_URL
-ARG DOWNLOADS_DIR
-COPY --chown=mightybuilder foo.txt $DOWNLOADS_DIR/pgilinux/* pgilinux/
+COPY --chown=mightybuilder foo.txt pgilinux/* pgilinux/
 
 RUN cd $HOME/Deps && \
     if [ "$BUILD_LOCALLY" = true ]; then \
@@ -46,9 +45,7 @@ RUN cd $HOME/Deps && \
     else \
       echo "-- Building on Travis"; \
     fi && \
-    ls . && \
     cd pgilinux && \
-    ls . && \
     export PGI_SILENT=true && \
     export PGI_ACCEPT_EULA=accept && \
     export PGI_INSTALL_DIR=$HOME/Deps/pgi && \
