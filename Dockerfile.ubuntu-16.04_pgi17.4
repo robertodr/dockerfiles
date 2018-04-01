@@ -48,7 +48,7 @@ RUN cd $HOME/Deps && \
       echo "-- Building on Travis"; \
       ls $HOME/Deps; \
     fi && \
-    cd pgilinux-2017-174-x86_64 && \
+    cd pgilinux && \
     export PGI_SILENT=true && \
     export PGI_ACCEPT_EULA=accept && \
     export PGI_INSTALL_DIR=$HOME/Deps/pgi && \
@@ -86,6 +86,6 @@ ENV PGI_BIN_DIR $PGI_HOME/bin
 ENV PGI_LIB_DIR $PGI_HOME/lib
 ENV PGI_MAN_DIR $PGI_HOME/man
 ENV LM_LICENSE_FILE $LM_LICENSE_FILE:$PGI/license.dat
-ENV PATH $PGI_HOME/bin:$PGI_HOME/mpi/openmpi/bin:$HOME/Deps/cmake-3.10.0/bin:$HOME/.local/bin:$PATH
+ENV PATH $PGI_HOME/bin:$PGI_HOME/mpi/openmpi/bin:$HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $PGI_LIB_DIR:$HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 ENV MANPATH $PGI_MAN_DIR:$MANPATH
