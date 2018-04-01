@@ -36,15 +36,17 @@ WORKDIR $HOME
 
 ARG BUILD_LOCALLY
 ARG PGI_URL
-COPY --chown=mightybuilder foo.txt $HOME/Downloads/pgilinux-2017-174-* $HOME/Deps/
+COPY --chown=mightybuilder foo.txt $HOME/Downloads/pgilinux* $HOME/Deps/
 
 RUN cd $HOME/Deps && \
     if [ "$BUILD_LOCALLY" = true ]; then \
       echo "-- Building locally"; \
-      mkdir -p pgilinux-2017-174-x86_64; \
-      curl -Ls $PGI_URL | tar -xz -C pgilinux-2017-174-x86_64 --strip-components=1; \
+      mkdir -p pgilinux; \
+      curl -Ls $PGI_URL | tar -xz -C pgilinux; \
+      ls $HOME/Deps; \
     else \
       echo "-- Building on Travis"; \
+      ls $HOME/Deps; \
     fi && \
     cd pgilinux-2017-174-x86_64 && \
     export PGI_SILENT=true && \
@@ -61,10 +63,10 @@ RUN cd $HOME/Deps && \
     cd $HOME/Deps && \
     if [ "$BUILD_LOCALLY" = true ]; then \
       echo "-- Cleaning up locally"; \
-      rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux-2017-174-x86_64; \
+      rm -rf pgilinux-2017-174-x86_64.tar.gz pgilinux; \
     else \
       echo "-- Cleaning up on Travis"; \
-      rm -rf pgilinux-2017-174-x86_64; \
+      rm -rf pgilinux; \
     fi && \
     export cmake_url="https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz" && \
     export target_path=$HOME/Deps/cmake/3.5.2 && \
