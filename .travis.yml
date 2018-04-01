@@ -29,7 +29,7 @@ after_success:
   - |
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4
     image=${dockerfile#Dockerfile.}
-    docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
+    docker build --build-arg BUILD_LOCALLY="false" --build-arg DOWNLOADS_DIR="$HOME/Downloads" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     docker push "$DOCKER_USERNAME"/$image
   # Build PGI+HDF5 image
