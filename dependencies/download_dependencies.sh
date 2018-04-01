@@ -10,7 +10,7 @@ else
   echo "-- PGI 17.4 NOT FOUND in cache"
   cd $HOME/Downloads
   mkdir -p pgilinux
-  curl -Ls $PGI_URL | tar -xz -C pgilinux
+  curl -L $PGI_URL | tar -xz -C pgilinux
   cd $TRAVIS_BUILD_DIR
 fi
 echo "-- Done with PGI 17.4"
@@ -22,7 +22,7 @@ else
   echo "-- MKL NOT FOUND in cache"
   cd $HOME/Downloads
   mkdir -p mkl
-  curl -Ls $MKL_URL | tar -xz -C mkl --strip-components=1
+  curl -L $MKL_URL | tar -xz -C mkl --strip-components=1
   cd $TRAVIS_BUILD_DIR
 fi
 echo "-- Done with MKL"
@@ -34,7 +34,7 @@ else
   echo "-- Intel NOT FOUND in cache"
   cd $HOME/Downloads
   mkdir -p parallel_studio
-  curl -Ls $INTEL_URL | tar -xz -C parallel_studio --strip-components=1
+  curl -L $INTEL_URL | tar -xz -C parallel_studio --strip-components=1
   cd $TRAVIS_BUILD_DIR
 fi
 echo "-- Done with Intel"
@@ -48,7 +48,7 @@ else
   echo "-- HDF5 $HDF5_VERSION NOT FOUND in cache"
   cd $HOME/Downloads
   mkdir -p hdf5-1.10.1
-  curl -Ls $HDF5_URL | tar -xj -C hdf5-1.10.1 --strip-components=1
+  curl -L $HDF5_URL | tar -xj -C hdf5-1.10.1 --strip-components=1
   cd $TRAVIS_BUILD_DIR
 fi
 echo "-- Done with HDF5 $HDF5_VERSION"

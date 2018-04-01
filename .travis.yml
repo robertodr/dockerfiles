@@ -20,7 +20,7 @@ before_install:
   - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
   - echo $CHANGED_FILES
 install:
-  - travis_wait 30 ./dependencies/download_dependencies.sh
+  - ./dependencies/download_dependencies.sh
   - ls $HOME/Downloads
 script:
   - python -c "import sys; print(sys.version)"
