@@ -45,6 +45,7 @@ RUN cd $HOME/Deps && \
     else \
       echo "-- Building on Travis"; \
     fi && \
+    ls . && \
     cd pgilinux && \
     ls . && \
     export PGI_SILENT=true && \
