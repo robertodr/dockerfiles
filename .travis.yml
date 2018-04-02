@@ -24,13 +24,14 @@ install:
 script:
   - python -c "import sys; print(sys.version)"
 after_success:
-  - cd $HOME/Downloads
-  - ls -ltrh .
   # Build PGI image
   - |
+    cp -rs $HOME/Downloads/pgilinux/ $TRAVIS_BUILD_DIR/pgilinux/
+    ls -ltrh .
+    ls -ltrh pgilinux
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4
     image=${dockerfile#Dockerfile.}
-    docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $TRAVIS_BUILD_DIR/$dockerfile $TRAVIS_BUILD_DIR
+    docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     docker push "$DOCKER_USERNAME"/$image
   # Build PGI+HDF5 image

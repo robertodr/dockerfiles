@@ -2,8 +2,8 @@ FROM ubuntu:16.04
 
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
 
-RUN apt -y update && \
-    apt -y upgrade && \
+RUN apt -y update &> /dev/null && \
+    apt -y upgrade &> /dev/null && \
     apt -y install bzip2 \
                    cpio \
                    curl \
@@ -18,7 +18,7 @@ RUN apt -y update && \
                    libnuma-dev \
                    python-dev \
                    python-pip \
-                   wget && \
+                   wget &> /dev/null && \
     rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
