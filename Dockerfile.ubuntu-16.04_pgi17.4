@@ -36,7 +36,7 @@ WORKDIR $HOME
 
 ARG BUILD_LOCALLY
 ARG PGI_URL
-COPY --chown=mightybuilder foo.txt pgilinux/* pgilinux/
+COPY --chown=mightybuilder foo.txt pgilinux/* $HOME/Deps/pgilinux/
 
 RUN cd $HOME/Deps && \
     if [ "$BUILD_LOCALLY" = true ]; then \
