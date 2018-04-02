@@ -36,7 +36,7 @@ WORKDIR $HOME
 
 ARG BUILD_LOCALLY
 ARG PGI_URL
-COPY --chown=mightybuilder foo.txt pgilinux* $HOME/Deps/
+COPY --chown=mightybuilder foo.txt pgilinux.tar* $HOME/Deps/
 
 RUN cd $HOME/Deps && \
     mkdir -p pgilinux && \
