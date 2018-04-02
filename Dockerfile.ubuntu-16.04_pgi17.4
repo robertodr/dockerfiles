@@ -45,7 +45,9 @@ RUN cd $HOME/Deps && \
     else \
       echo "-- Building on Travis"; \
     fi && \
+    ls -ltrh . && \
     cd pgilinux && \
+    ls -ltrh . && \
     export PGI_SILENT=true && \
     export PGI_ACCEPT_EULA=accept && \
     export PGI_INSTALL_DIR=$HOME/Deps/pgi && \

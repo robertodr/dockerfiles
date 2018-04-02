@@ -25,6 +25,7 @@ script:
   - python -c "import sys; print(sys.version)"
 after_success:
   - cd $HOME/Downloads
+  - ls -ltrh .
   # Build PGI image
   - |
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4
