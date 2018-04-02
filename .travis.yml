@@ -30,6 +30,7 @@ after_success:
     done
     cp $TRAVIS_BUILD_DIR/foo.txt $HOME/Downloads
   - cd $HOME/Downloads
+  - ls -ltrh .
   # Build PGI image
   - |
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4

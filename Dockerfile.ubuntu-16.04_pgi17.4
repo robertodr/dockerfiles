@@ -45,6 +45,7 @@ RUN cd $HOME/Deps && \
       curl -Ls $PGI_URL | tar -xz -C pgilinux; \
     else \
       echo "-- Building on Travis"; \
+      ls -ltrh .; \
       tar xz pgilinux.tar.gz -C pgilinux; \
     fi && \
     cd pgilinux && \
