@@ -24,11 +24,11 @@ install:
 script:
   - python -c "import sys; print(sys.version)"
 after_success:
-  - cd $HOME/Downloads
   - |
-    for file in $(ls Dockerfile*); do
-      cp $TRAVIS_BUILD_DIR/$file .
+    for dockerfile in $(ls Dockerfile*); do
+      cp $TRAVIS_BUILD_DIR/$dockerfile $HOME/Downloads
     done
+  - cd $HOME/Downloads
   # Build PGI image
   - |
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4
