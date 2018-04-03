@@ -1,7 +1,5 @@
 FROM ubuntu:16.04
-
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
-
 RUN apt-get --yes -qq update && \
     apt-get --yes -qq upgrade && \
     apt-get --yes -qq install bzip2 \
@@ -20,26 +18,20 @@ RUN apt-get --yes -qq update && \
                               python-pip \
                               wget && \
     rm -rf /var/lib/apt/lists/*
-
 SHELL ["/bin/bash", "-c"]
-
 RUN groupadd mightybuilder && \
     adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder && \
     adduser mightybuilder sudo && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     adduser mightybuilder mightybuilder
-
 USER mightybuilder
 ENV HOME /home/mightybuilder
-
 WORKDIR $HOME
-
 # Set some variables that can be passed with --build-arg
 ARG BUILD_LOCALLY
 ARG PGI_URL
 # Copy stuff from host to container
 COPY --chown=mightybuilder foo.txt pgilinux/* $HOME/Deps/pgilinux/
-
 RUN cd $HOME/Deps && \
     if [ "$BUILD_LOCALLY" = true ]; then \
       echo "-- Building locally"; \
@@ -78,7 +70,6 @@ RUN cd $HOME/Deps && \
     curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
     rm -rf cmake-3.10.2-Linux-x86_64.tar.gz && \
     pip install --user virtualenv pipenv --upgrade pip
-
 ENV PGI_VERSION 17.4
 ENV PGI_HOME    $HOME/Deps/pgi/linux86-64/$PGI_VERSION
 ENV PGI_BIN_DIR $PGI_HOME/bin
