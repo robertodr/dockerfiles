@@ -1,9 +1,6 @@
 FROM robertodr/ubuntu-16.04_pgi17.4:latest
-
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
-
 SHELL ["/bin/bash", "-c"]
-
 RUN mkdir -p $HOME/Downloads && \
     cd $HOME/Deps && \
     mkdir -p ninja && \
@@ -28,12 +25,11 @@ RUN mkdir -p $HOME/Downloads && \
     cd $HOME/Downloads && \
     echo "-- Done with HDF5 1.10.1" && \
     curl -Ls https://repo.continuum.io/archive/Anaconda2-5.1.0-Linux-x86_64.sh > conda.sh && \
-    bash conda.sh -b -p $HOME/Deps/conda && \
+    bash conda.sh -b -p $HOME/Deps/conda &> /dev/null && \
     rm -rf conda.sh && \
     PATH=$HOME/Deps/conda/bin${PATH:+:$PATH} && \
     conda config --set always_yes yes --set changeps1 no &> /dev/null && \
     conda update -q conda &> /dev/null && \
-    conda info -a && \
     echo "-- Done with Anaconda 5.1.0"
-ENV PATH $HOME/Deps/ninja:$PATH
+ENV PATH $HOME/Deps/ninja:$HOME/Deps/conda/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/Deps/hdf5/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
