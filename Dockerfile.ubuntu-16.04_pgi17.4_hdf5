@@ -1,7 +1,6 @@
 FROM robertodr/ubuntu-16.04_pgi17.4:latest
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
 SHELL ["/bin/bash", "-c"]
-# Build additional dependencies
 RUN mkdir -p $HOME/Downloads && \
     cd $HOME/Deps && \
     mkdir -p ninja && \
