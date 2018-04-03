@@ -47,6 +47,7 @@ after_success:
       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       docker push "$DOCKER_USERNAME"/$image
       echo "-- DONE with $image"
+      docker rmi "$DOCKER_USERNAME"/$image "$DOCKER_USERNAME"/${image%_hdf5}
     fi
   # Build GCC+OpenMPI+MKL image
   #- |
