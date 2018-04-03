@@ -16,25 +16,32 @@ env:
 before_install:
   - CHANGED_FILES=($(git diff --name-only $TRAVIS_COMMIT_RANGE))
   - echo $CHANGED_FILES
-install:
-  - ./dependencies/download_dependencies.sh
+#install:
+#  - ./dependencies/download_dependencies.sh
 script:
   - python -c "import sys; print(sys.version)"
 after_success:
-  - |
-    for dockerfile in $(ls Dockerfile*); do
-      cp $TRAVIS_BUILD_DIR/$dockerfile $HOME/Downloads
-    done
-    cp $TRAVIS_BUILD_DIR/foo.txt $HOME/Downloads
-  - cd $HOME/Downloads
-  - ls -ltrh .
+  #- |
+  #  for dockerfile in $(ls Dockerfile*); do
+  #    cp $TRAVIS_BUILD_DIR/$dockerfile $HOME/Downloads
+  #  done
+  #  cp $TRAVIS_BUILD_DIR/foo.txt $HOME/Downloads
+  #- cd $HOME/Downloads
+  #- ls -ltrh
   # Build PGI image
   - |
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4
-    image=${dockerfile#Dockerfile.}
-    docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
-    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-    docker push "$DOCKER_USERNAME"/$image
+    if [[ $CHANGED_FILES =~ (^|[[:space:]])$dockerfile($|[[:space:]]) ]]; then
+      image=${dockerfile#Dockerfile.}
+      echo "-- Building $image"
+      mkdir -p pgilinux
+      curl -L $PGI_URL | tar -xz -C pgilinux
+      docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker push "$DOCKER_USERNAME"/$image
+      echo "-- DONE with $image"
+      rm -rf pgilinux
+    fi
   # Build PGI+HDF5 image
   #- |
   #  dockerfile=Dockerfile.ubuntu-16.04_pgi17.4_hdf5

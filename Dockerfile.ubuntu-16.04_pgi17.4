@@ -36,17 +36,14 @@ WORKDIR $HOME
 
 ARG BUILD_LOCALLY
 ARG PGI_URL
-COPY --chown=mightybuilder foo.txt pgilinux.tar* $HOME/Deps/
+COPY --chown=mightybuilder foo.txt pgilinux/* $HOME/Deps/pgilinux/
 
 RUN cd $HOME/Deps && \
-    mkdir -p pgilinux && \
     if [ "$BUILD_LOCALLY" = true ]; then \
       echo "-- Building locally"; \
       curl -Ls $PGI_URL | tar -xz -C pgilinux; \
     else \
       echo "-- Building on Travis"; \
-      ls -ltrh .; \
-      tar xz pgilinux.tar.gz -C pgilinux; \
     fi && \
     cd pgilinux && \
     export PGI_SILENT=true && \
