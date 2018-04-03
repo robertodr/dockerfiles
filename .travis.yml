@@ -38,12 +38,16 @@ after_success:
       rm -rf pgilinux
     fi
   # Build PGI+HDF5 image
-  #- |
-  #  dockerfile=Dockerfile.ubuntu-16.04_pgi17.4_hdf5
-  #  image=${dockerfile#Dockerfile.}
-  #  docker build --build_arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
-  #  docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  #  docker push "$DOCKER_USERNAME"/$image
+  - |
+    dockerfile=Dockerfile.ubuntu-16.04_pgi17.4_hdf5
+    if [[ $CHANGED_FILES =~ (^|[[:space:]])$dockerfile($|[[:space:]]) ]]; then
+      image=${dockerfile#Dockerfile.}
+      echo "-- Building $image"
+      docker build --build_arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker push "$DOCKER_USERNAME"/$image
+      echo "-- DONE with $image"
+    fi
   # Build GCC+OpenMPI+MKL image
   #- |
   #  dockerfile=Dockerfile.ubuntu-16.04_gcc5.3.1_openmpi1.10_mkl2017.4.239
