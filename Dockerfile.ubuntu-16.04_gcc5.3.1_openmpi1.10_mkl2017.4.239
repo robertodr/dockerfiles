@@ -1,45 +1,53 @@
 FROM ubuntu:16.04
-
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
-
-RUN apt -y update && \
-    apt -y upgrade && \
-    apt -y install bzip2 \
-                   cpio \
-                   curl \
-                   g++ \
-                   gcc \
-                   gfortran \
-                   git \
-                   libboost-all-dev \
-                   libopenmpi-dev \
-                   openmpi-bin \
-                   python-dev \
-                   python-pip \
-                   zlib1g-dev \
-                   wget && \
+RUN apt-get --yes -qq update && \
+    apt-get --yes -qq upgrade && \
+    apt-get --yes -qq install bzip2 \
+                              cpio \
+                              curl \
+                              g++ \
+                              gcc \
+                              gfortran \
+                              git \
+                              libboost-all-dev \
+                              libopenmpi-dev \
+                              openmpi-bin \
+                              python-dev \
+                              python-pip \
+                              zlib1g-dev \
+                              wget && \
     rm -rf /var/lib/apt/lists/*
-
 SHELL ["/bin/bash", "-c"]
-
-RUN curl -LOs http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/12147/l_mkl_2017.4.239.tgz && \
-    mkdir -p l_mkl_2017.4.239 && \
-    tar xzfp l_mkl_2017.4.239.tgz -C l_mkl_2017.4.239 --strip-components=1 && \
-    cd l_mkl_2017.4.239 && \
-    curl -LO https://raw.githubusercontent.com/robertodr/dockerfiles/master/silent-mkl.cfg && \
+# Set some variables that can be passed with --build-arg
+ARG BUILD_LOCALLY
+ARG MKL_URL
+# Copy stuff from host to container
+COPY silent-mkl.cfg mkl/* Deps/mkl/
+RUN cd $WORKDIR/Deps && \
+    if [ "$BUILD_LOCALLY" = true ]; then \
+      echo "-- Building locally"; \
+      curl -Ls $MKL_URL | tar -xz -C mkl --strip-components=1; \
+    else \
+      echo "-- Building on Travis"; \
+    fi && \
+    cd mkl && \
     ./install.sh --silent=silent-mkl.cfg && \
-    cd .. && \
-    rm -rf l_mkl_2017.4.239.tgz l_mkl_2017.4.239 && \
+    cd $WORKDIR/Deps && \
+    if [ "$BUILD_LOCALLY" = true ]; then \
+      echo "-- Cleaning up locally"; \
+      rm -rf l_mkl_2017.4.239.tgz mkl; \
+    else \
+      echo "-- Cleaning up on Travis"; \
+      rm -rf mkl; \
+    fi && \
+    groupadd mightybuilder && \
     adduser --disabled-password --gecos '' --system --shell /bin/bash mightybuilder && \
     adduser mightybuilder sudo && \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+    adduser mightybuilder mightybuilder
 USER mightybuilder
 ENV HOME /home/mightybuilder
-
 WORKDIR $HOME
-
-# Install CMake 3.10.2
 RUN mkdir -p $HOME/Deps && \
     cd $HOME/Deps && \
     export cmake_url="https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz" && \
@@ -47,7 +55,7 @@ RUN mkdir -p $HOME/Deps && \
     mkdir -p $target_path && \
     curl -Ls $cmake_url | tar -xz -C $target_path --strip-components=1 && \
     rm -rf cmake-3.10.2-Linux-x86_64.tar.gz && \
-    pip install --user --upgrade pip virtualenv
+    pip install --user virtualenv pipenv --upgrade pip
 ENV PATH $HOME/Deps/cmake/bin:$HOME/.local/bin:$PATH
 ENV LD_LIBRARY_PATH $HOME/.local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 ENV MKLROOT=/opt/intel/compilers_and_libraries_2017.5.239/linux/mkl
