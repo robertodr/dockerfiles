@@ -2,23 +2,23 @@ FROM ubuntu:16.04
 
 MAINTAINER Roberto Di Remigio  <roberto.d.remigio@uit.no>
 
-RUN apt -y update &> /dev/null && \
-    apt -y upgrade &> /dev/null && \
-    apt -y install bzip2 \
-                   cpio \
-                   curl \
-                   g++ \
-                   gcc \
-                   gfortran \
-                   git \
-                   libatlas-dev \
-                   libboost-all-dev \
-                   libhwloc-dev \
-                   liblapack-dev \
-                   libnuma-dev \
-                   python-dev \
-                   python-pip \
-                   wget &> /dev/null && \
+RUN apt-get --yes -qq update && \
+    apt-get --yes -qq upgrade && \
+    apt-get --yes -qq install bzip2 \
+                              cpio \
+                              curl \
+                              g++ \
+                              gcc \
+                              gfortran \
+                              git \
+                              libatlas-dev \
+                              libboost-all-dev \
+                              libhwloc-dev \
+                              liblapack-dev \
+                              libnuma-dev \
+                              python-dev \
+                              python-pip \
+                              wget && \
     rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
