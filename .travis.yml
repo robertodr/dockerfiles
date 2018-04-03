@@ -35,7 +35,7 @@ after_success:
     if [[ $CHANGED_FILES =~ (^|[[:space:]])$dockerfile($|[[:space:]]) ]]; then
       image=${dockerfile#Dockerfile.}
       echo "-- Building $image"
-      docker build --build-arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       docker push "$DOCKER_USERNAME"/$image
       echo "-- DONE with $image"
@@ -49,7 +49,7 @@ after_success:
       echo "-- Building $image"
       mkdir -p mkl
       curl -L $MKL_URL | tar -xz -C mkl --strip-components=1
-      docker build --build-arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       docker push "$DOCKER_USERNAME"/$image
       echo "-- DONE with $image"
@@ -64,7 +64,7 @@ after_success:
       echo "-- Building $image"
       mkdir -p mkl
       curl -L $INTEL_URL | tar -xz -C parallel_studio --strip-components=1
-      docker build --build-arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker build --build-arg BUILD_LOCALLY="false" -t "$DOCKER_USERNAME"/$image -f $dockerfile .
       docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       docker push "$DOCKER_USERNAME"/$image
       echo "-- DONE with $image"
