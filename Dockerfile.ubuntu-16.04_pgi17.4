@@ -34,8 +34,10 @@ ENV HOME /home/mightybuilder
 
 WORKDIR $HOME
 
+# Set some variables that can be passed with --build-arg
 ARG BUILD_LOCALLY
 ARG PGI_URL
+# Copy stuff from host to container
 COPY --chown=mightybuilder foo.txt pgilinux/* $HOME/Deps/pgilinux/
 
 RUN cd $HOME/Deps && \
