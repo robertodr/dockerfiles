@@ -16,14 +16,6 @@ before_install:
 script:
   - python -c "import sys; print(sys.version)"
 after_success:
-  #- |
-  #  for dockerfile in $(ls Dockerfile*); do
-  #    cp $TRAVIS_BUILD_DIR/$dockerfile $HOME/Downloads
-  #  done
-  #  cp $TRAVIS_BUILD_DIR/foo.txt $HOME/Downloads
-  #- cd $HOME/Downloads
-  #- ls -ltrh
-  # Build PGI image
   - |
     dockerfile=Dockerfile.ubuntu-16.04_pgi17.4
     if [[ $CHANGED_FILES =~ (^|[[:space:]])$dockerfile($|[[:space:]]) ]]; then
@@ -50,26 +42,32 @@ after_success:
       docker rmi "$DOCKER_USERNAME"/$image "$DOCKER_USERNAME"/${image%_hdf5}
     fi
   # Build GCC+OpenMPI+MKL image
-  #- |
-  #  dockerfile=Dockerfile.ubuntu-16.04_gcc5.3.1_openmpi1.10_mkl2017.4.239
-  #  image=${dockerfile#Dockerfile.}
-  #  docker build --build_arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
-  #  docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  #  docker push "$DOCKER_USERNAME"/$image
+  - |
+    dockerfile=Dockerfile.ubuntu-16.04_gcc5.3.1_openmpi1.10_mkl2017.4.239
+    if [[ $CHANGED_FILES =~ (^|[[:space:]])$dockerfile($|[[:space:]]) ]]; then
+      image=${dockerfile#Dockerfile.}
+      echo "-- Building $image"
+      mkdir -p mkl
+      curl -L $MKL_URL | tar -xz -C mkl --strip-components=1
+      docker build --build_arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker push "$DOCKER_USERNAME"/$image
+      echo "-- DONE with $image"
+      docker rmi "$DOCKER_USERNAME"/$image
+      rm -rf mkl
+    fi
   # Build Intel image
-  #- |
-  #  dockerfile=Dockerfile.ubuntu-16.04_gcc5.3.1_openmpi1.10_mkl2017.4.239
-  #  image=${dockerfile#Dockerfile.}
-  #  docker build --build_arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
-  #  docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  #  docker push "$DOCKER_USERNAME"/$image
-  #- |
-  #  for file in $CHANGED_FILES; do
-  #    if [[ $file =~ "Dockerfile" ]]; then
-  #      dockerfile=$file
-  #      image=${dockerfile#Dockerfile.}
-  #      travis_wait 30 docker build -t "$DOCKER_USERNAME"/$image -f $dockerfile .
-  #      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  #      docker push "$DOCKER_USERNAME"/$image
-  #    fi
-  #  done
+  - |
+    dockerfile=Dockerfile.ubuntu-16.04_intel2018.1
+    if [[ $CHANGED_FILES =~ (^|[[:space:]])$dockerfile($|[[:space:]]) ]]; then
+      image=${dockerfile#Dockerfile.}
+      echo "-- Building $image"
+      mkdir -p mkl
+      curl -L $INTEL_URL | tar -xz -C parallel_studio --strip-components=1
+      docker build --build_arg BUILD_LOCALLY="false" --t "$DOCKER_USERNAME"/$image -f $dockerfile .
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker push "$DOCKER_USERNAME"/$image
+      echo "-- DONE with $image"
+      docker rmi "$DOCKER_USERNAME"/$image
+      rm -rf parallel_studio
+    fi
